@@ -1,3 +1,7 @@
+# Yenner Gonzalez Araya - B83375
+# IE0411 - Microelectronica 
+# Tarea 4 - Simulated Annealing
+
 # IMPORTS
 
 import random
