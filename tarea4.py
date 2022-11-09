@@ -1,9 +1,10 @@
-# imports
+# IMPORTS
 
 import random
-
+import math
 
 # - - - - - - - - - - - - - - DEFINE CONSTANTS - - - - - - - - - - - - - -
+
 # function domain
 func_domain = [0,20]
 
@@ -26,13 +27,18 @@ counter = 0
 # improvement achieved on the current iteration
 iteration_improvement = 0
 
+# - - - - - - - - - - - - - - DEFINE FUNCTIONS - - - - - - - - - - - - - -
+
 # evaluate the function
 def EvalFunction (x1, x2):
     result = x1*(x1-5)+(x2**3)-x1*(x2+11)
     return result
 
-# program keeps running while switches improve the result or during 99 consecutive non-improving iterations 
+# - - - - - - - - - - - - - - DEFINE PROGRAM ROUTINE - - - - - - - - - - - - - -
+
+# program keeps running while switches improve the result or during 99 consecutive non-improving iterations
 while ((((counter < 100) and (improved == False)) or (improved == True))):
+    
     # evaluate current result
     current_result = EvalFunction(x1_solution, x2_solution)
     
@@ -43,8 +49,11 @@ while ((((counter < 100) and (improved == False)) or (improved == True))):
     # evaluate new result
     new_result = EvalFunction(x1_solution+rand_x1_increment, x2_solution+rand_x2_increment)
 
+    # calculate iteration improvement
+    iteration_improvement = current_result - new_result
+
     # if the new result improves it is kept  
-    if (new_result + improvement_threshold < current_result):
+    if (improvement_threshold < iteration_improvement):
         x1_solution = x1_solution+rand_x1_increment
         x2_solution = x2_solution+rand_x2_increment
 
@@ -76,11 +85,14 @@ while ((((counter < 100) and (improved == False)) or (improved == True))):
 
         # Evaluate if the change is kept even if it did not improve the result 
         
-        # random temperature value to act as threshold with respect to current temperature  
-        rand_temp = random.random()*100
+        # random value to compare against P
+        rand_value = random.random()
+
+        # obtain P to compare against random value
+        P = math.exp(iteration_improvement/curr_temp)
         
-        # compare random temperature with current temperature - if current temperature is greater, accept the change
-        if (rand_temp < curr_temp):
+        # compare random value with P - if P is greater, accept the change
+        if (rand_value < P):
             x1_solution = x1_solution+rand_x1_increment
             x2_solution = x2_solution+rand_x2_increment
 
@@ -100,7 +112,7 @@ while ((((counter < 100) and (improved == False)) or (improved == True))):
             # evaluate new result
             new_result = EvalFunction(x1_solution, x2_solution)
         
-        # if current temperature is lower and the temperature comparation is also lower, the change is not accepted
+        # if new result is lower and P is also lower, the change is not accepted
         else:
             pass
         
@@ -108,11 +120,16 @@ while ((((counter < 100) and (improved == False)) or (improved == True))):
         curr_temp = curr_temp*0.99
 
     # print the results
-    print("\nCurrent result:  %f \n" %current_result)
-    print("x1:              %f \n" %x1_solution)
-    print("Δx1              %f \n" %rand_x1_increment)
-    print("x2:              %f \n" %x2_solution)
-    print("Δx2              %f \n" %rand_x2_increment)
-    print("counter:         %d \n" %counter)
-    print("Temperature:     %f \n" %curr_temp)
-    print("----------------------------")
+    print("Past result:                           %f \n" %current_result)
+    print("Current result:                        %f \n" %new_result)
+    print("x1:                                    %f \n" %x1_solution)
+    print("Δx1                                    %f \n" %rand_x1_increment)
+    print("x2:                                    %f \n" %x2_solution)
+    print("Δx2                                    %f \n" %rand_x2_increment)
+    print("Consecutive non-improving iterations:  %d \n" %counter)
+    print("Temperature:                           %f \n" %curr_temp)
+    if (iteration_improvement > 0):
+      print("Iteration Improvement:                 %f \n" %iteration_improvement)
+    else:
+      print("Iteration did not improve the result. \n")
+    print("---------------------------- \n")
